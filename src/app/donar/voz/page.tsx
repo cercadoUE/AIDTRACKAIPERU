@@ -5,7 +5,6 @@ import { Mic, Square, Loader2, CheckCircle2, Sparkles, Hourglass } from "lucide-
 import { api, ApiError } from "@/lib/api";
 import { PageHeader, Card, CardContent, Button, Textarea, ErrorBox, Notice, Badge } from "@/components/ui";
 import { DonationEditor, toDrafts, type DraftItem } from "@/components/donation-editor";
-import { useSession } from "@/components/providers";
 import { cn } from "@/lib/utils";
 import { withBase } from "@/lib/base-path";
 
@@ -42,7 +41,6 @@ function toPcm16(chunks: Float32Array[], inputRate: number): Uint8Array {
 }
 
 export default function DonarVoz() {
-  const { user } = useSession();
   const [stage, setStage] = React.useState<Stage>("idle");
   const [transcript, setTranscript] = React.useState("");
   const [engine, setEngine] = React.useState<string>("");
@@ -138,7 +136,7 @@ export default function DonarVoz() {
       <div className="space-y-5">
         <Card>
           <CardContent className="flex flex-col items-center gap-5 p-8">
-            <button onClick={recording ? stop : start} disabled={!user || stage === "processing" || analyze.isPending}
+            <button onClick={recording ? stop : start} disabled={stage === "processing" || analyze.isPending}
               aria-label={recording ? "Detener grabación" : "Iniciar grabación"}
               className={cn("relative grid size-28 place-items-center rounded-full text-white shadow-xl transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand2 disabled:opacity-50", recording ? "bg-danger text-danger rec-ring" : "bg-gradient-to-br from-brand2 to-accent")}>
               <span className="relative z-10 text-white">{recording ? <Square className="size-10" /> : <Mic className="size-12" />}</span>
@@ -152,19 +150,19 @@ export default function DonarVoz() {
                 return <li key={s.id}><Badge tone={cur ? "blue" : done ? "green" : "gray"}><Icon className={cn("size-3.5", cur && s.id !== "recording" && "animate-spin")} /> {s.label}</Badge></li>;
               })}
             </ol>
-            {!user && <Notice tone="orange">Ingresa o crea una cuenta para donar por voz.</Notice>}
+            
             {micError && <ErrorBox error={micError} />}
             <p className="text-center text-xs text-muted">Privacidad: el audio se procesa en el momento y <b>no se guarda</b>. {speechSupported ? "Si Amazon Transcribe no está disponible se usa el reconocimiento de tu navegador, que puede enviar el audio al proveedor del navegador." : "Tu navegador no incluye reconocimiento de voz; sin Amazon Transcribe deberás escribir el mensaje."}</p>
           </CardContent>
         </Card>
 
-        {(transcript || micError) && !recording && (
+        {!recording && (
           <Card>
             <CardContent className="space-y-3 p-5">
-              <div className="flex items-center justify-between"><label htmlFor="tr" className="text-sm font-medium">Transcripción (puedes corregirla)</label>{engine && <Badge tone="gray">{engine}</Badge>}</div>
-              <Textarea id="tr" rows={3} value={transcript} onChange={(e) => setTranscript(e.target.value)} placeholder="Escribe aquí si la transcripción no salió bien" />
-              {analyze.error && <ErrorBox error={analyze.error instanceof ApiError ? analyze.error : String(analyze.error)} />}
-              <div className="flex justify-end"><Button loading={analyze.isPending} disabled={transcript.trim().length < 3 || !user} onClick={() => { setStage("analyzing"); analyze.mutate(transcript); }}><Sparkles className="size-4" /> Analizar donación</Button></div>
+              <div className="flex items-center justify-between"><label htmlFor="tr" className="text-sm font-medium">{transcript ? "Transcripción (puedes corregirla)" : "¿Sin micrófono? Escribe aquí lo que dirías"}</label>{engine && <Badge tone="gray">{engine}</Badge>}</div>
+              <Textarea id="tr" rows={3} value={transcript} onChange={(e) => setTranscript(e.target.value)} placeholder="Ej.: Tengo cien botellas de agua y cincuenta paquetes de arroz para donar." />
+              {analyze.error && <ErrorBox error={`No pudimos analizar el mensaje: ${analyze.error instanceof ApiError ? analyze.error.message : String(analyze.error)}. Intenta de nuevo o usa el formulario.`} />}
+              <div className="flex justify-end"><Button loading={analyze.isPending} disabled={transcript.trim().length < 3} onClick={() => { setStage("analyzing"); analyze.mutate(transcript); }}>{!analyze.isPending && <Sparkles className="size-4" />} {analyze.isPending ? "Analizando…" : "Analizar donación"}</Button></div>
             </CardContent>
           </Card>
         )}

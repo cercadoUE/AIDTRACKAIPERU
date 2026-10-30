@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Plus, Trash2, CheckCircle2, Pill } from "lucide-react";
 import { api } from "@/lib/api";
 import { CATEGORIES, DEPARTMENTS, PRODUCTS, PRODUCT_BY_KEY } from "@/server/domain/catalog";
@@ -37,7 +37,8 @@ export function toDrafts(parsed: { category: string; product: string; quantity: 
 export function DonationEditor({ initial, originalText, channel, location, departmentCode }: { initial: DraftItem[]; originalText?: string; channel: "text" | "voice" | "form"; location?: string | null; departmentCode?: string | null }) {
   const router = useRouter();
   const toast = useToast();
-  const { user } = useSession();
+  const { user, refresh } = useSession();
+  const qc = useQueryClient();
   const [items, setItems] = React.useState<DraftItem[]>(initial);
   const [dept, setDept] = React.useState(departmentCode ?? "");
   const [transport, setTransport] = React.useState(true);
@@ -50,6 +51,12 @@ export function DonationEditor({ initial, originalText, channel, location, depar
   const submit = useMutation({
     onError: (e) => toast("error", `No se pudo registrar: ${e.message}`),
     mutationFn: async () => {
+      // Sin sesión se continúa como donante invitado: el flujo nunca se bloquea por el login.
+      if (!user) {
+        await api("/api/auth/guest", { method: "POST" });
+        await qc.invalidateQueries({ queryKey: ["session"] });
+        refresh();
+      }
       const created = await api<{ donation: { id: string; folio: string } }>("/api/donations", {
         method: "POST",
         json: {
@@ -79,19 +86,13 @@ export function DonationEditor({ initial, originalText, channel, location, depar
     return errs.length === 0;
   };
 
-  if (!user) {
-    return (
-      <Notice tone="orange">
-        Para registrar tu donación necesitas iniciar sesión. <Link prefetch={false} className="font-semibold underline" href={`/login?next=${encodeURIComponent(typeof window === "undefined" ? "/donar" : window.location.pathname)}`}>Ingresa</Link> o <Link prefetch={false} className="font-semibold underline" href="/registro">crea una cuenta</Link>; al volver, tu texto seguirá aquí para analizarlo de nuevo.
-      </Notice>
-    );
-  }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Revisa y confirma tu donación</CardTitle>
         <p className="text-sm text-muted">Nada se registra hasta que confirmes. Corrige lo que sea necesario.</p>
+        {!user && <p className="text-sm">Puedes confirmar <b>sin crear cuenta</b> (como donante invitado) o <Link prefetch={false} className="font-semibold text-brand2 underline" href={`/login?next=${encodeURIComponent(typeof window === "undefined" ? "/donar" : window.location.pathname)}`}>ingresar</Link> para guardarla en tu historial.</p>}
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-3">

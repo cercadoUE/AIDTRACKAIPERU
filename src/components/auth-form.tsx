@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { api } from "@/lib/api";
+import { withBase } from "@/lib/base-path";
 import { Button, Card, CardContent, CardHeader, CardTitle, ErrorBox, Field, Input, Notice } from "./ui";
 
 const loginSchema = z.object({ email: z.string().trim().min(1, "Ingresa tu usuario o correo"), password: z.string().min(1, "Ingresa tu contraseña") });
@@ -28,6 +29,15 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
   const router = useRouter();
   const qc = useQueryClient();
   const isLogin = mode === "login";
+  // Lectura tras el montaje (no en el render) para mantener la hidratación estable.
+  const [nextParam, setNextParam] = React.useState("/donar");
+  const [formError, setFormError] = React.useState(false);
+  React.useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- lee la URL una sola vez
+    setNextParam(q.get("next") ?? "/donar");
+    setFormError(q.get("error") === "1");
+  }, []);
   const form = useForm<{ name?: string; email: string; password: string }>({ resolver: zodResolver(isLogin ? loginSchema : registerSchema) as never });
   const m = useMutation({
     mutationFn: (v: { name?: string; email: string; password: string }) => api(`/api/auth/${mode}`, { method: "POST", json: v }),
@@ -45,10 +55,12 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       <Card>
         <CardHeader><CardTitle className="text-xl">{isLogin ? "Ingresar" : "Crear cuenta de donante"}</CardTitle></CardHeader>
         <CardContent>
-          <form onSubmit={form.handleSubmit((v) => m.mutate(v))} className="space-y-4" noValidate>
+          <form action={isLogin ? withBase("/api/auth/login") : undefined} method="post" onSubmit={form.handleSubmit((v) => m.mutate(v))} className="space-y-4" noValidate>
+            {isLogin && <input type="hidden" name="next" value={nextParam} />}
+            {isLogin && formError && !m.error && <ErrorBox error="Usuario o contraseña incorrectos. Revisa los datos e intenta de nuevo." />}
             {!isLogin && <Field label="Nombre" htmlFor="name" error={e.name?.message}><Input id="name" autoComplete="name" {...form.register("name")} /></Field>}
-            <Field label={isLogin ? "Usuario o correo" : "Correo"} htmlFor="email" error={e.email?.message}><Input id="email" type={isLogin ? "text" : "email"} autoComplete={isLogin ? "username" : "email"} {...form.register("email")} /></Field>
-            <Field label="Contraseña" htmlFor="password" error={e.password?.message} hint={isLogin ? undefined : "Mínimo 8 caracteres."}><Input id="password" type="password" autoComplete={isLogin ? "current-password" : "new-password"} {...form.register("password")} /></Field>
+            <Field label={isLogin ? "Usuario o correo" : "Correo"} htmlFor="email" error={e.email?.message}><Input id="email" type={isLogin ? "text" : "email"} autoComplete={isLogin ? "username" : "email"} {...form.register("email")} name="email" /></Field>
+            <Field label="Contraseña" htmlFor="password" error={e.password?.message} hint={isLogin ? undefined : "Mínimo 8 caracteres."}><Input id="password" type="password" autoComplete={isLogin ? "current-password" : "new-password"} {...form.register("password")} name="password" /></Field>
             {m.error && <ErrorBox error={m.error.message.startsWith("Correo o contraseña") ? "Usuario o contraseña incorrectos. Revisa los datos e intenta de nuevo." : m.error} />}
             <Button type="submit" className="w-full" loading={m.isPending}>{m.isPending ? (isLogin ? "Entrando…" : "Creando cuenta…") : isLogin ? "Entrar" : "Crear cuenta"}</Button>
           </form>
