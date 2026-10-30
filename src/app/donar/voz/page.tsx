@@ -17,6 +17,8 @@ interface SpeechRec { lang: string; continuous: boolean; interimResults: boolean
 type SpeechCtor = new () => SpeechRec;
 
 const MAX_SECONDS = 30;
+const noopSubscribe = () => () => {};
+const hasSpeechApi = () => { const w = window as unknown as { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown }; return !!(w.SpeechRecognition || w.webkitSpeechRecognition); };
 const STEPS: { id: Stage; label: string; icon: React.ElementType }[] = [
   { id: "recording", label: "Grabando", icon: Mic },
   { id: "processing", label: "Procesando audio", icon: Loader2 },
@@ -50,7 +52,8 @@ export default function DonarVoz() {
   const [drafts, setDrafts] = React.useState<DraftItem[] | null>(null);
 
   const rec = React.useRef<{ ctx?: AudioContext; stream?: MediaStream; proc?: ScriptProcessorNode; chunks: Float32Array[]; sr?: SpeechRec; live: string; timer?: ReturnType<typeof setInterval> }>({ chunks: [], live: "" });
-  const speechSupported = typeof window !== "undefined" && !!((window as unknown as { SpeechRecognition?: SpeechCtor; webkitSpeechRecognition?: SpeechCtor }).SpeechRecognition || (window as unknown as { webkitSpeechRecognition?: SpeechCtor }).webkitSpeechRecognition);
+  // En el servidor no hay window: se lee con useSyncExternalStore para que la hidratación coincida.
+  const speechSupported = React.useSyncExternalStore(noopSubscribe, hasSpeechApi, () => false);
 
   const analyze = useMutation({
     mutationFn: (text: string) => api<{ result: Parsed }>("/api/ai/parse-donation", { method: "POST", json: { text } }),

@@ -16,11 +16,11 @@ export default function DonacionesPage() {
   return (
     <>
       <PageHeader title="Donaciones y seguimiento" subtitle={user?.role === "donor" ? "Tus donaciones registradas y su estado." : "Donaciones visibles según tu rol."}
-        actions={<Link href="/donar"><Button variant="accent"><Heart className="size-4" /> Quiero donar</Button></Link>} />
+        actions={<Link prefetch={false} href="/donar"><Button variant="accent"><Heart className="size-4" /> Quiero donar</Button></Link>} />
       {loading ? <Spinner /> : !user ? (
-        <Notice tone="orange">Ingresa para ver tus donaciones. <Link className="underline" href="/login">Ingresar</Link></Notice>
+        <Notice tone="orange">Ingresa para ver tus donaciones. <Link prefetch={false} className="underline" href="/login">Ingresar</Link></Notice>
       ) : q.isLoading ? <Spinner /> : q.error ? <ErrorBox error={q.error} /> : !q.data?.donations.length ? (
-        <Card><CardContent><EmptyState title="Aún no hay donaciones" text="Registra tu primera donación por texto, voz o formulario." action={<Link href="/donar"><Button>Donar ahora</Button></Link>} /></CardContent></Card>
+        <Card><CardContent><EmptyState title="Aún no hay donaciones" text="Registra tu primera donación por texto, voz o formulario." action={<Link prefetch={false} href="/donar"><Button>Donar ahora</Button></Link>} /></CardContent></Card>
       ) : (
         <Table>
           <thead><tr><Th>Folio</Th><Th>Productos</Th><Th>Canal</Th><Th>Estado</Th><Th>Fecha</Th><Th><span className="sr-only">Acción</span></Th></tr></thead>
@@ -32,7 +32,7 @@ export default function DonacionesPage() {
                 <Td>{({ text: "Texto", voice: "Voz", form: "Formulario" } as Record<string, string>)[d.channel]}</Td>
                 <Td><Badge tone={d.status === "received" ? "green" : d.status === "registered" ? "gray" : "blue"}>{STATUS_LABEL[d.status]}</Badge></Td>
                 <Td>{fmtDate(d.createdAt)}</Td>
-                <Td><Link className="text-brand2 underline" href={`/donaciones/${d.id}`}>Ver</Link></Td>
+                <Td><Link prefetch={false} className="text-brand2 underline" href={`/donaciones/${d.id}`}>Ver</Link></Td>
               </tr>
             ))}
           </tbody>

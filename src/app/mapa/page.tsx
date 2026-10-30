@@ -61,7 +61,7 @@ export default function MapaPage() {
                 <div><h3 className="text-xs font-semibold uppercase text-muted">Necesidades pendientes</h3>{sh.needs.length ? <ul className="text-sm">{sh.needs.map((n, i) => <li key={i}>{n.product}: {fmtNum(n.pending)} {n.unit} <span className="text-muted">({URGENCY[n.urgency]})</span></li>)}</ul> : <p className="text-sm text-muted">Sin necesidades abiertas</p>}</div>
                 <p className="text-xs text-muted">{sh.explanation}</p>
                 <p className="text-xs text-muted">Actualizado: {fmtDate(sh.updatedAt)} · Confianza {sh.confidence}</p>
-                <div className="flex gap-2"><Link className="flex-1" href={`/donar?albergue=${sh.id}`}><Button variant="accent" className="w-full"><HeartHandshake className="size-4" /> Ofrecer ayuda</Button></Link><Link href={`/albergues/${sh.id}`}><Button variant="outline">Detalle</Button></Link></div>
+                <div className="flex gap-2"><Link prefetch={false} className="flex-1" href={`/donar?albergue=${sh.id}`}><Button variant="accent" className="w-full"><HeartHandshake className="size-4" /> Ofrecer ayuda</Button></Link><Link prefetch={false} href={`/albergues/${sh.id}`}><Button variant="outline">Detalle</Button></Link></div>
               </CardContent></Card>
             ) : dept ? (
               <Card><CardContent className="space-y-2 p-4">
@@ -70,7 +70,7 @@ export default function MapaPage() {
                 <dl className="grid grid-cols-2 gap-2 text-sm"><div><dt className="text-muted text-xs">Albergues registrados</dt><dd className="text-lg font-semibold">{dept.shelters}</dd></div><div><dt className="text-muted text-xs">Personas alojadas</dt><dd className="text-lg font-semibold">{fmtNum(dept.occupants)}</dd></div><div><dt className="text-muted text-xs">Necesidades pendientes</dt><dd className="text-lg font-semibold">{fmtNum(dept.pending)}</dd></div><div><dt className="text-muted text-xs">Donaciones asignadas</dt><dd className="text-lg font-semibold">{fmtNum(dept.assigned)}</dd></div><div><dt className="text-muted text-xs">Cobertura estimada</dt><dd className="text-lg font-semibold">{dept.coverage === null ? "s/d" : `${dept.coverage}%`}</dd></div><div><dt className="text-muted text-xs">Índice promedio</dt><dd className="text-lg font-semibold">{dept.avgIndex ?? "s/d"}</dd></div></dl>
                 <p className="text-xs text-muted">Actualizado: {fmtDate(dept.updatedAt)}</p>
                 {!dept.shelters && <p className="text-sm text-muted">No hay albergues registrados en este departamento.</p>}
-                <Link className="text-sm text-brand2 underline" href={`/ranking?department=${dept.code}`}>Ver ranking del departamento</Link>
+                <Link prefetch={false} className="text-sm text-brand2 underline" href={`/ranking?department=${dept.code}`}>Ver ranking del departamento</Link>
               </CardContent></Card>
             ) : <Notice tone="blue">Haz clic en un departamento o en un albergue para ver su detalle.</Notice>}
             <Notice tone="violet">Los puntos y rutas de demostración son <b>simulados</b>; sus coordenadas no corresponden a albergues reales.</Notice>

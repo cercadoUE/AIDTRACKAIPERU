@@ -46,7 +46,7 @@ export default function SimuladorPage() {
     if (a) setActions([...actions, a]);
   };
 
-  if (!allowed) return (<><PageHeader title="Simulador nacional de emergencias" /><Notice tone="orange">Disponible para coordinación logística y administración. <Link className="underline" href="/login">Ingresar</Link> (ej. logistica@aidtrack.demo)</Notice></>);
+  if (!allowed) return (<><PageHeader title="Simulador nacional de emergencias" /><Notice tone="orange">Disponible para coordinación logística y administración. <Link prefetch={false} className="underline" href="/login">Ingresar</Link> (ej. logistica@aidtrack.demo)</Notice></>);
   const r = run.data;
   const row = (label: string, b: number | string, a: number | string, good: "up" | "down") => {
     const n = typeof b === "number" && typeof a === "number" ? a - b : 0;

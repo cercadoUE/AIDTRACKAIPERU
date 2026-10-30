@@ -37,13 +37,13 @@ export function RankingView({ initialDepartment }: { initialDepartment?: string 
             {q.data.rows.map((r) => (
               <tr key={r.shelterId}>
                 <Td className="font-bold">{r.rank ?? "—"}</Td>
-                <Td><Link className="font-medium text-brand2 underline" href={`/albergues/${r.shelterId}`}>{r.name}</Link> {r.simulated && <SimBadge />}</Td>
+                <Td><Link prefetch={false} className="font-medium text-brand2 underline" href={`/albergues/${r.shelterId}`}>{r.name}</Link> {r.simulated && <SimBadge />}</Td>
                 <Td>{r.department}</Td><Td>{fmtNum(r.occupants)}</Td><Td>{r.mainNeed ?? "—"}</Td>
                 <Td>{r.autonomyDays === null ? "s/d" : `${r.autonomyDays} d`}</Td>
                 <Td><span className={`inline-block min-w-12 rounded-full px-2.5 py-0.5 text-center text-xs font-bold ${LEVELS[r.level].cls}`}>{r.metric ?? "s/d"}</span>{r.note && <div className="text-xs text-muted">{r.note}</div>}{r.preliminary && <Badge tone="orange" className="mt-1">Preliminar</Badge>}</Td>
                 <Td className="text-xs">{fmtDate(r.updatedAt)}</Td>
                 <Td><Badge tone={r.verified ? "green" : "gray"}>{r.verified ? "Verificado" : "No verificado"}</Badge></Td>
-                <Td><Link href={`/donar?albergue=${r.shelterId}`}><Button size="sm" variant="accent"><HeartHandshake className="size-4" /> Ayudar a este albergue</Button></Link></Td>
+                <Td><Link prefetch={false} href={`/donar?albergue=${r.shelterId}`}><Button size="sm" variant="accent"><HeartHandshake className="size-4" /> Ayudar a este albergue</Button></Link></Td>
               </tr>
             ))}
           </tbody>

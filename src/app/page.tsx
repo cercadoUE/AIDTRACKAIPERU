@@ -18,14 +18,14 @@ export default function Home() {
   const k = d.data?.kpis;
   return (
     <div className="space-y-8">
-      <section className="grid-bg overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-[#08183a] via-[#0a2a5e] to-[#0b3b6b] p-8 text-white sm:p-12">
+      <section className="overflow-hidden rounded-3xl border border-border p-8 text-white sm:p-12" style={{ backgroundImage: "radial-gradient(circle at 20% 10%, rgba(22,119,255,.35), transparent 40%), radial-gradient(circle at 85% 30%, rgba(18,184,134,.28), transparent 38%), linear-gradient(135deg, #08183a, #0a2a5e 55%, #0b3b6b)" }}>
         <p className="mb-3 inline-block rounded-full bg-white/10 px-3 py-1 text-xs tracking-widest text-sky-200">PLATAFORMA NACIONAL DE AYUDA HUMANITARIA</p>
         <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">Conecta lo que donas con quien más lo necesita.</h1>
         <p className="mt-4 max-w-2xl text-sky-100/90">AIDTRACK AI PERÚ une donantes, albergues y logística en un solo sistema: prioriza necesidades reales, recomienda dónde enviar cada producto y permite seguir cada donación hasta que el albergue la recibe.</p>
         <div className="mt-7 flex flex-wrap gap-3">
-          <Link href="/donar"><Button size="lg" variant="accent"><HeartHandshake className="size-5" /> QUIERO DONAR <ArrowRight className="size-4" /></Button></Link>
-          <Link href="/mapa"><Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20">Ver mapa nacional</Button></Link>
-          <Link href="/ranking"><Button size="lg" variant="ghost" className="text-white hover:bg-white/10">Ranking de albergues</Button></Link>
+          <Link prefetch={false} href="/donar"><Button size="lg" variant="accent"><HeartHandshake className="size-5" /> QUIERO DONAR <ArrowRight className="size-4" /></Button></Link>
+          <Link prefetch={false} href="/mapa"><Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20">Ver mapa nacional</Button></Link>
+          <Link prefetch={false} href="/ranking"><Button size="lg" variant="ghost" className="text-white hover:bg-white/10">Ranking de albergues</Button></Link>
         </div>
       </section>
 

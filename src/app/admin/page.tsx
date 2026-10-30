@@ -45,7 +45,7 @@ export default function AdminPage() {
   const saveW = useMutation({ mutationFn: () => api("/api/admin/settings", { method: "PUT", json: { weights: weights ?? q.data!.settings.weights, targetDays: days } }), onSuccess: () => { toast("ok", "Parámetros guardados"); refresh(); }, onError: (e) => toast("error", e.message) });
 
   if (loading) return <Spinner />;
-  if (user?.role !== "admin") return (<><PageHeader title="Administración" /><Notice tone="orange">Solo administradores. {user ? "Tu rol no tiene acceso." : <Link className="underline" href="/login">Ingresar</Link>} (demo: admin@aidtrack.demo)</Notice></>);
+  if (user?.role !== "admin") return (<><PageHeader title="Administración" /><Notice tone="orange">Solo administradores. {user ? "Tu rol no tiene acceso." : <Link prefetch={false} className="underline" href="/login">Ingresar</Link>} (demo: admin@aidtrack.demo)</Notice></>);
   if (q.isLoading) return <Spinner />;
   if (q.error) return <ErrorBox error={q.error} />;
   const o = q.data!;
@@ -57,7 +57,7 @@ export default function AdminPage() {
       <PageHeader title="Administración" subtitle="Verificación de albergues, usuarios, importación de datos oficiales, parámetros y auditoría." actions={<Button variant="outline" loading={reset.isPending} onClick={() => confirm("Esto reinicia los datos de DEMOSTRACIÓN (los datos oficiales importados se conservan). ¿Continuar?") && reset.mutate()}><RotateCcw className="size-4" /> Reiniciar demo</Button>} />
       <div className="grid gap-5 lg:grid-cols-2">
         <Card><CardHeader><CardTitle>Albergues por verificar</CardTitle></CardHeader><CardContent>
-          {o.pendingShelters.length ? <Table className="min-w-0"><thead><tr><Th>Albergue</Th><Th>Estado</Th><Th>Acción</Th></tr></thead><tbody>{o.pendingShelters.map((s) => <tr key={s.id}><Td><Link className="text-brand2 underline" href={`/albergues/${s.id}`}>{s.name}</Link><div className="text-xs text-muted">{s.district}, {s.department} · {fmtDate(s.createdAt)}</div></Td><Td><Badge tone="orange">{s.status === "pending" ? "Pendiente" : s.status}</Badge></Td><Td className="space-x-1"><Button size="sm" variant="accent" onClick={() => verify.mutate({ id: s.id, decision: "verify" })}>Verificar</Button><Button size="sm" variant="outline" onClick={() => verify.mutate({ id: s.id, decision: "reject" })}>Rechazar</Button></Td></tr>)}</tbody></Table> : <p className="text-sm text-muted">No hay albergues pendientes.</p>}
+          {o.pendingShelters.length ? <Table className="min-w-0"><thead><tr><Th>Albergue</Th><Th>Estado</Th><Th>Acción</Th></tr></thead><tbody>{o.pendingShelters.map((s) => <tr key={s.id}><Td><Link prefetch={false} className="text-brand2 underline" href={`/albergues/${s.id}`}>{s.name}</Link><div className="text-xs text-muted">{s.district}, {s.department} · {fmtDate(s.createdAt)}</div></Td><Td><Badge tone="orange">{s.status === "pending" ? "Pendiente" : s.status}</Badge></Td><Td className="space-x-1"><Button size="sm" variant="accent" onClick={() => verify.mutate({ id: s.id, decision: "verify" })}>Verificar</Button><Button size="sm" variant="outline" onClick={() => verify.mutate({ id: s.id, decision: "reject" })}>Rechazar</Button></Td></tr>)}</tbody></Table> : <p className="text-sm text-muted">No hay albergues pendientes.</p>}
         </CardContent></Card>
 
         <Card><CardHeader><CardTitle>Parámetros del índice de necesidad</CardTitle></CardHeader><CardContent className="space-y-3">

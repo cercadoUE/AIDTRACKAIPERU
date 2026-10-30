@@ -48,6 +48,7 @@ export function DonationEditor({ initial, originalText, channel, location, depar
   const hasMedicine = items.some((i) => PRODUCT_BY_KEY.get(i.product)?.medicine);
 
   const submit = useMutation({
+    onError: (e) => toast("error", `No se pudo registrar: ${e.message}`),
     mutationFn: async () => {
       const created = await api<{ donation: { id: string; folio: string } }>("/api/donations", {
         method: "POST",
@@ -60,6 +61,7 @@ export function DonationEditor({ initial, originalText, channel, location, depar
       return created.donation;
     },
     onSuccess: (d) => {
+      sessionStorage.removeItem("aidtrack-donacion-texto");
       toast("ok", `Donación ${d.folio} registrada`);
       router.push(`/donaciones/${d.id}`);
     },
@@ -80,7 +82,7 @@ export function DonationEditor({ initial, originalText, channel, location, depar
   if (!user) {
     return (
       <Notice tone="orange">
-        Para registrar tu donación necesitas una cuenta. <Link className="font-semibold underline" href="/login">Ingresa</Link> o <Link className="font-semibold underline" href="/registro">crea una cuenta</Link>; tus datos de abajo no se pierden mientras no recargues la página.
+        Para registrar tu donación necesitas iniciar sesión. <Link prefetch={false} className="font-semibold underline" href={`/login?next=${encodeURIComponent(typeof window === "undefined" ? "/donar" : window.location.pathname)}`}>Ingresa</Link> o <Link prefetch={false} className="font-semibold underline" href="/registro">crea una cuenta</Link>; al volver, tu texto seguirá aquí para analizarlo de nuevo.
       </Notice>
     );
   }
@@ -152,7 +154,7 @@ export function DonationEditor({ initial, originalText, channel, location, depar
         {submit.error && <ErrorBox error={submit.error} />}
         <div className="flex items-center justify-between gap-3">
           <p className="text-xs text-muted">Al confirmar, el sistema calcula una recomendación. Un coordinador logístico debe aprobar el despacho.</p>
-          <Button variant="accent" size="lg" loading={submit.isPending} onClick={() => validate() && submit.mutate()}><CheckCircle2 className="size-5" /> Confirmar y registrar</Button>
+          <Button variant="accent" size="lg" loading={submit.isPending} onClick={() => validate() && submit.mutate()}>{!submit.isPending && <CheckCircle2 className="size-5" />} {submit.isPending ? "Registrando y calculando recomendación…" : "Confirmar y registrar"}</Button>
         </div>
       </CardContent>
     </Card>

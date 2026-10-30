@@ -48,16 +48,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const active = (href: string) => (href === "/" ? path === "/" : href === "/distribucion" ? path === "/distribucion" : path.startsWith(href));
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[17rem_1fr]">
+    <div className="min-h-screen lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">
       <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:z-[3000] focus:bg-white focus:p-2 focus:text-black">Saltar al contenido</a>
       <aside className={cn("fixed inset-y-0 left-0 z-[1500] w-64 -translate-x-full overflow-y-auto bg-sidebar p-4 text-white transition-transform lg:static lg:w-auto lg:translate-x-0", open && "translate-x-0")} aria-label="Navegación principal">
-        <Link href="/" className="mb-6 flex items-center gap-2.5 px-1">
+        <Link prefetch={false} href="/" className="mb-6 flex items-center gap-2.5 px-1">
           <span className="grid size-10 place-items-center rounded-xl bg-gradient-to-br from-brand2 to-accent shadow-lg"><Radar className="size-5" aria-hidden /></span>
           <span className="leading-tight"><span className="block text-lg font-extrabold tracking-tight">AIDTRACK</span><span className="block text-[11px] tracking-[0.2em] text-sky-200">AI PERÚ</span></span>
         </Link>
         <nav className="space-y-1">
           {NAV.map(({ href, label, icon: Icon, highlight }) => (
-            <Link key={href} href={href} aria-current={active(href) ? "page" : undefined}
+            <Link prefetch={false} key={href} href={href} aria-current={active(href) ? "page" : undefined}
               className={cn("flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition", active(href) ? "bg-white/15 font-semibold" : "text-sky-100/80 hover:bg-white/10", highlight && !active(href) && "bg-accent/90 font-semibold text-white hover:bg-accent")}>
               <Icon className="size-4" aria-hidden /> {label}
             </Link>
@@ -79,10 +79,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <div className="hidden text-right text-xs leading-tight sm:block"><div className="font-semibold">{user.name}</div><div className="text-muted">{ROLE_LABEL[user.role]}</div></div>
                 <Button variant="outline" size="sm" onClick={logout}><LogOut className="size-4" /> Salir</Button>
               </>
-            ) : (
+            ) : path === "/login" || path === "/registro" ? null : (
               <>
-                <Link href="/login"><Button variant="outline" size="sm"><LogIn className="size-4" /> Ingresar</Button></Link>
-                <Link href="/registro" className="hidden sm:block"><Button size="sm"><UserPlus className="size-4" /> Crear cuenta</Button></Link>
+                <Link prefetch={false} href={`/login?next=${encodeURIComponent(path)}`}><Button variant="outline" size="sm"><LogIn className="size-4" /> Ingresar</Button></Link>
+                <Link prefetch={false} href="/registro" className="hidden sm:block"><Button size="sm"><UserPlus className="size-4" /> Crear cuenta</Button></Link>
               </>
             )}
           </div>

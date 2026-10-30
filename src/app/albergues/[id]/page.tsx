@@ -67,7 +67,7 @@ export default function AlbergueDetalle() {
   return (
     <>
       <PageHeader title={s.name} subtitle={`${s.district}, ${s.province}, ${s.department} · UBIGEO ${s.ubigeo}`}
-        actions={<div className="flex flex-wrap items-center gap-2">{s.is_simulated && <SimBadge />}<Badge tone={s.verified ? "green" : "orange"}>{SHELTER_STATUS[s.status]}</Badge><Link href={`/donar?albergue=${s.id}`}><Button variant="accent"><HeartHandshake className="size-4" /> Ayudar a este albergue</Button></Link></div>} />
+        actions={<div className="flex flex-wrap items-center gap-2">{s.is_simulated && <SimBadge />}<Badge tone={s.verified ? "green" : "orange"}>{SHELTER_STATUS[s.status]}</Badge><Link prefetch={false} href={`/donar?albergue=${s.id}`}><Button variant="accent"><HeartHandshake className="size-4" /> Ayudar a este albergue</Button></Link></div>} />
 
       {s.is_simulated && <div className="mb-4"><Notice tone="violet">Albergue de <b>demostración</b>: sus datos y coordenadas son simulados y no corresponden a un establecimiento real.</Notice></div>}
       {!s.verified && !s.is_simulated && <div className="mb-4"><Notice tone="orange">Este albergue aún no está verificado. {user?.role === "admin" && <span className="ml-2 inline-flex gap-2"><Button size="sm" variant="accent" loading={verify.isPending} onClick={() => verify.mutate("verify")}><ShieldCheck className="size-4" /> Verificar</Button><Button size="sm" variant="outline" onClick={() => verify.mutate("reject")}>Rechazar</Button></span>}</Notice></div>}
@@ -153,7 +153,7 @@ export default function AlbergueDetalle() {
 
       <div className="mt-5 grid gap-5 lg:grid-cols-2">
         <Card><CardHeader><CardTitle>Donaciones recibidas / asignadas</CardTitle></CardHeader><CardContent>
-          {d.received.length ? <Table><thead><tr><Th>Donación</Th><Th>Producto</Th><Th>Cantidad</Th></tr></thead><tbody>{d.received.map((r) => <tr key={r.id}><Td><Link className="text-brand2 underline" href={`/donaciones/${r.donationId}`}>{r.donationFolio}</Link></Td><Td>{productLabel(r.product)}</Td><Td>{r.quantity} {r.unit}</Td></tr>)}</tbody></Table> : <p className="text-sm text-muted">Sin donaciones asignadas todavía.</p>}
+          {d.received.length ? <Table><thead><tr><Th>Donación</Th><Th>Producto</Th><Th>Cantidad</Th></tr></thead><tbody>{d.received.map((r) => <tr key={r.id}><Td><Link prefetch={false} className="text-brand2 underline" href={`/donaciones/${r.donationId}`}>{r.donationFolio}</Link></Td><Td>{productLabel(r.product)}</Td><Td>{r.quantity} {r.unit}</Td></tr>)}</tbody></Table> : <p className="text-sm text-muted">Sin donaciones asignadas todavía.</p>}
         </CardContent></Card>
         <Card><CardHeader><CardTitle>Historial de cambios</CardTitle></CardHeader><CardContent>
           {d.canEdit ? (d.history.length ? <ul className="space-y-2 text-sm">{d.history.map((h) => <li key={h.id}><span className="text-xs text-muted">{fmtDate(h.createdAt)}</span><br />{Object.entries(h.changes).map(([k, v]) => <span key={k} className="mr-2 text-xs"><code>{k}</code>: {describeChange(v)}</span>)}</li>)}</ul> : <p className="text-sm text-muted">Sin cambios registrados.</p>) : <p className="text-sm text-muted">El historial es visible para el coordinador del albergue y administración.</p>}

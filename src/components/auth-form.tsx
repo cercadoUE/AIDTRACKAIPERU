@@ -33,7 +33,9 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
     mutationFn: (v: { name?: string; email: string; password: string }) => api(`/api/auth/${mode}`, { method: "POST", json: v }),
     onSuccess: async () => {
       await qc.invalidateQueries();
-      router.push("/donar");
+      const next = new URLSearchParams(window.location.search).get("next");
+      // Solo rutas internas: evita redirecciones abiertas a otros dominios.
+      router.push(next && next.startsWith("/") && !next.startsWith("//") ? next : "/donar");
       router.refresh();
     },
   });
@@ -47,11 +49,11 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
             {!isLogin && <Field label="Nombre" htmlFor="name" error={e.name?.message}><Input id="name" autoComplete="name" {...form.register("name")} /></Field>}
             <Field label={isLogin ? "Usuario o correo" : "Correo"} htmlFor="email" error={e.email?.message}><Input id="email" type={isLogin ? "text" : "email"} autoComplete={isLogin ? "username" : "email"} {...form.register("email")} /></Field>
             <Field label="Contraseña" htmlFor="password" error={e.password?.message} hint={isLogin ? undefined : "Mínimo 8 caracteres."}><Input id="password" type="password" autoComplete={isLogin ? "current-password" : "new-password"} {...form.register("password")} /></Field>
-            {m.error && <ErrorBox error={m.error} />}
-            <Button type="submit" className="w-full" loading={m.isPending}>{isLogin ? "Ingresar" : "Crear cuenta"}</Button>
+            {m.error && <ErrorBox error={m.error.message.startsWith("Correo o contraseña") ? "Usuario o contraseña incorrectos. Revisa los datos e intenta de nuevo." : m.error} />}
+            <Button type="submit" className="w-full" loading={m.isPending}>{m.isPending ? (isLogin ? "Entrando…" : "Creando cuenta…") : isLogin ? "Entrar" : "Crear cuenta"}</Button>
           </form>
           <p className="mt-4 text-center text-sm text-muted">
-            {isLogin ? <>¿No tienes cuenta? <Link className="text-brand2 underline" href="/registro">Regístrate</Link></> : <>¿Ya tienes cuenta? <Link className="text-brand2 underline" href="/login">Ingresa</Link></>}
+            {isLogin ? <>¿No tienes cuenta? <Link prefetch={false} className="text-brand2 underline" href="/registro">Regístrate</Link></> : <>¿Ya tienes cuenta? <Link prefetch={false} className="text-brand2 underline" href="/login">Ingresa</Link></>}
           </p>
           {!isLogin && <p className="mt-2 text-xs text-muted">Las cuentas nuevas son de donante. Los roles de coordinación los asigna un administrador.</p>}
         </CardContent>

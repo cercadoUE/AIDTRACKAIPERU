@@ -48,7 +48,7 @@ export default function RegistrarAlbergue() {
     onSuccess: (r) => { toast("ok", "Albergue registrado. Queda pendiente de verificación por un administrador."); router.push(`/albergues/${r.shelter.id}`); },
   });
 
-  if (!user) return <Notice tone="orange">Para registrar un albergue necesitas una cuenta. <Link className="underline" href="/login">Ingresar</Link> · <Link className="underline" href="/registro">Crear cuenta</Link></Notice>;
+  if (!user) return <Notice tone="orange">Para registrar un albergue necesitas una cuenta. <Link prefetch={false} className="underline" href="/login">Ingresar</Link> · <Link prefetch={false} className="underline" href="/registro">Crear cuenta</Link></Notice>;
   const num = (name: keyof FormValues) => register(name, { setValueAs: (v) => (v === "" || v === undefined ? undefined : Number(v)) });
   return (
     <>

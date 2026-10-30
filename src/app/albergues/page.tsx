@@ -20,7 +20,7 @@ export default function AlberguesPage() {
   return (
     <>
       <PageHeader title="Albergues" subtitle="Consulta, busca y administra los albergues registrados. Los nuevos albergues aparecen como verificados solo después de la validación de un administrador."
-        actions={<Link href="/albergues/registrar"><Button><Plus className="size-4" /> Registrar albergue</Button></Link>} />
+        actions={<Link prefetch={false} href="/albergues/registrar"><Button><Plus className="size-4" /> Registrar albergue</Button></Link>} />
       <Card className="mb-4"><CardContent className="grid gap-2 p-4 sm:grid-cols-2 lg:grid-cols-5">
         <div className="relative lg:col-span-2"><Search className="pointer-events-none absolute left-3 top-3 size-4 text-muted" aria-hidden /><Input aria-label="Buscar por nombre o ubicación" className="pl-9" placeholder="Buscar por nombre, distrito, provincia…" value={f.q} onChange={set("q")} /></div>
         <Select aria-label="Departamento" value={f.department} onChange={set("department")}><option value="">Todos los departamentos</option>{DEPARTMENTS.map((d) => <option key={d.code} value={d.code}>{d.name}</option>)}</Select>
@@ -32,7 +32,7 @@ export default function AlberguesPage() {
           <thead><tr><Th>Albergue</Th><Th>Ubicación</Th><Th>Ocupación</Th><Th>Principal necesidad</Th><Th>Prioridad</Th><Th>Estado</Th><Th>Actualizado</Th></tr></thead>
           <tbody>{q.data.shelters.map((s) => (
             <tr key={s.id}>
-              <Td><Link className="font-medium text-brand2 underline" href={`/albergues/${s.id}`}>{s.name}</Link> {s.is_simulated && <SimBadge />}</Td>
+              <Td><Link prefetch={false} className="font-medium text-brand2 underline" href={`/albergues/${s.id}`}>{s.name}</Link> {s.is_simulated && <SimBadge />}</Td>
               <Td>{s.district}, {s.province}<div className="text-xs text-muted">{s.department}</div></Td>
               <Td>{fmtNum(s.occupants)} / {fmtNum(s.capacity)}</Td><Td>{s.mainNeed ?? "—"}</Td>
               <Td><span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${LEVELS[s.priority.level].cls}`}>{LEVELS[s.priority.level].label}{s.priority.score !== null ? ` · ${s.priority.score}` : ""}</span></Td>

@@ -39,7 +39,7 @@ export default function DonacionDetalle() {
   const advance = useMutation({ mutationFn: (v: { sid: string; to: string }) => api(`/api/shipments/${v.sid}/advance`, { method: "POST", json: { to: v.to } }), onSuccess: () => { toast("ok", "Estado actualizado"); refresh(); }, onError: (e) => toast("error", e.message) });
   const confirm = useMutation({ mutationFn: (v: { sid: string; code: string }) => api(`/api/shipments/${v.sid}/confirm`, { method: "POST", json: { code: v.code } }), onSuccess: () => { toast("ok", "Recepción confirmada"); refresh(); }, onError: (e) => toast("error", e.message) });
 
-  if (!user) return <Notice tone="orange">Ingresa para ver esta donación. <Link className="underline" href="/login">Ingresar</Link></Notice>;
+  if (!user) return <Notice tone="orange">Ingresa para ver esta donación. <Link prefetch={false} className="underline" href="/login">Ingresar</Link></Notice>;
   if (q.isLoading) return <Spinner />;
   if (q.error) return <ErrorBox error={q.error} />;
   const d = q.data!;
@@ -64,8 +64,8 @@ export default function DonacionDetalle() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-5 lg:grid-cols-[1fr_22rem]">
-        <div className="space-y-5">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="min-w-0 space-y-5">
           {d.donation.originalText && (
             <Card>
               <CardHeader><CardTitle>Lo que escribiste</CardTitle></CardHeader>
@@ -91,7 +91,7 @@ export default function DonacionDetalle() {
                 <>
                   <Table><thead><tr><Th>#</Th><Th>Albergue</Th><Th>Depto.</Th><Th>Necesidad</Th><Th>Cantidad</Th><Th>Cobertura</Th><Th>Dist.</Th></tr></thead>
                     <tbody>{d.allocations.map((a, i) => (
-                      <tr key={a.id}><Td>{i + 1}</Td><Td><Link className="text-brand2 underline" href={`/albergues/${a.shelterId}`}>{a.shelterName}</Link> {a.simulated && <SimBadge />}</Td><Td>{a.department}</Td><Td>{a.label}</Td><Td className="font-semibold">{a.quantity} {a.unit}</Td><Td>{Math.round(a.coverage * 100)}%</Td><Td>{a.distanceKm ? `${a.distanceKm} km` : "—"}</Td></tr>
+                      <tr key={a.id}><Td>{i + 1}</Td><Td><Link prefetch={false} className="text-brand2 underline" href={`/albergues/${a.shelterId}`}>{a.shelterName}</Link> {a.simulated && <SimBadge />}</Td><Td>{a.department}</Td><Td>{a.label}</Td><Td className="font-semibold">{a.quantity} {a.unit}</Td><Td>{Math.round(a.coverage * 100)}%</Td><Td>{a.distanceKm ? `${a.distanceKm} km` : "—"}</Td></tr>
                     ))}</tbody></Table>
                   <details className="rounded-lg border border-border p-3 text-sm"><summary className="cursor-pointer font-medium">¿Por qué estas recomendaciones?</summary><ul className="mt-2 list-disc space-y-2 pl-5 text-muted">{d.allocations.map((a) => <li key={a.id}>{a.explanation}</li>)}</ul></details>
                   {proposed.length > 0 && <Notice tone="orange">Es una <b>recomendación</b>. Un coordinador logístico debe aprobarla antes del despacho; la distancia es lineal estimada, no una ruta real.</Notice>}
@@ -122,7 +122,7 @@ export default function DonacionDetalle() {
                           </form>
                         )}
                       </div>
-                      {s.qr && <div className="text-center"><img src={s.qr} alt={`QR de seguimiento del envío ${s.code}`} className="size-32 rounded-lg border border-border bg-white p-1" /><Link className="mt-1 block text-xs text-brand2 underline" href={`/seguimiento/${s.qrToken}`}>Abrir seguimiento</Link><p className="mt-1 max-w-32 text-[10px] text-muted">El QR solo consulta el estado. No confirma entregas.</p></div>}
+                      {s.qr && <div className="text-center"><img src={s.qr} alt={`QR de seguimiento del envío ${s.code}`} className="size-32 rounded-lg border border-border bg-white p-1" /><Link prefetch={false} className="mt-1 block text-xs text-brand2 underline" href={`/seguimiento/${s.qrToken}`}>Abrir seguimiento</Link><p className="mt-1 max-w-32 text-[10px] text-muted">El QR solo consulta el estado. No confirma entregas.</p></div>}
                     </div>
                   );
                 })}

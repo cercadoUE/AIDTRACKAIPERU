@@ -18,7 +18,7 @@ export default async function DonarPage({ searchParams }: { searchParams: Promis
       {albergue && <div className="mb-4"><Notice tone="blue">Quieres ayudar a un albergue en particular. Registra tus productos y el sistema evaluará si ese albergue los necesita, junto con otros que puedan necesitarlos más.</Notice></div>}
       <div className="grid gap-4 md:grid-cols-3">
         {OPTIONS.map(({ href, icon: Icon, title, text, color }) => (
-          <Link key={href} href={`${href}${suffix}`} className="group focus-visible:outline-2 focus-visible:outline-brand2 rounded-2xl">
+          <Link prefetch={false} key={href} href={`${href}${suffix}`} className="group focus-visible:outline-2 focus-visible:outline-brand2 rounded-2xl">
             <Card className="h-full transition group-hover:-translate-y-1 group-hover:shadow-lg">
               <CardContent className="space-y-3 p-6">
                 <span className={`grid size-14 place-items-center rounded-2xl bg-gradient-to-br ${color} text-white shadow`}><Icon className="size-7" aria-hidden /></span>
