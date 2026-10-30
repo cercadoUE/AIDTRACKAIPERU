@@ -80,6 +80,7 @@ Para usar Bedrock en local: `AI_PROVIDER=bedrock` con credenciales AWS en el ent
 | `TRANSCRIBE` | `aws` para habilitar Amazon Transcribe |
 | `AUTO_SEED` | `1` para sembrar la demo en producción |
 | `NEXT_BASE_PATH` | Prefijo de ruta (por ejemplo, detrás de un proxy) |
+| `TEAM_ID` | Id del equipo en la Kiro IAthon, devuelto por `GET /health` (T062) |
 
 No subas credenciales: `.env*` está en `.gitignore`.
 
