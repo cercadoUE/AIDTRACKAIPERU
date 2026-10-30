@@ -8,8 +8,8 @@ import { createDonation, recommend, approveAllocations } from "../services/donat
 import { createShipments, advanceShipment, confirmReceipt } from "../services/shipments";
 import { DEFAULT_TARGET_DAYS, DEFAULT_WEIGHTS } from "../services/priority";
 
-/** Contraseña de las cuentas de demostración. Configurable con DEMO_PASSWORD (obligatoria en producción). */
-export const DEMO_PASSWORD = process.env.DEMO_PASSWORD ?? "Demo2026!";
+/** Contraseña de las cuentas demo. Se define con DEMO_PASSWORD; el valor por defecto solo sirve para desarrollo local. */
+export const DEMO_PASSWORD = process.env.DEMO_PASSWORD ?? "demo-local-2026";
 /** Tablas de datos oficiales importados por ETL: el reinicio de la demo NO las toca. */
 const KEEP: TableName[] = ["locations", "emergencyStats", "dataSources"];
 const ALL: TableName[] = ["users", "shelters", "inventory", "needs", "donations", "donationItems", "allocations", "centers", "shipments", "shipmentEvents", "emergencies", "priorities", "optimizationRuns", "audit", "settings", "shelterHistory", "counters"];

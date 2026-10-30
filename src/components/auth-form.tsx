@@ -16,6 +16,9 @@ const registerSchema = z.object({
   password: z.string().min(8, "Mínimo 8 caracteres"),
 });
 
+/** La contraseña demo solo se muestra si se define al compilar (NEXT_PUBLIC_DEMO_PASSWORD); nunca vive en el código. */
+const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD ?? "";
+
 const DEMO = [
   ["Donante", "donante@aidtrack.demo"], ["Coordinador de albergue", "coordinador@aidtrack.demo"],
   ["Coordinador logístico", "logistica@aidtrack.demo"], ["Administrador", "admin@aidtrack.demo"],
@@ -53,15 +56,15 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
           {!isLogin && <p className="mt-2 text-xs text-muted">Las cuentas nuevas son de donante. Los roles de coordinación los asigna un administrador.</p>}
         </CardContent>
       </Card>
-      {isLogin && (
+      {isLogin && DEMO_PASSWORD && (
         <div className="mt-4">
           <Notice tone="violet">
-            <b>Acceso rápido de demostración:</b> usuario <code className="rounded bg-black/10 px-1">demo</code>, contraseña <code className="rounded bg-black/10 px-1">Demo2026!</code>.{" "}
-            <button type="button" className="font-semibold underline" onClick={() => { form.setValue("email", "demo"); form.setValue("password", "Demo2026!"); }}>Completar</button>
+            <b>Acceso rápido de demostración:</b> usuario <code className="rounded bg-black/10 px-1">demo</code>, contraseña <code className="rounded bg-black/10 px-1">{DEMO_PASSWORD}</code>.{" "}
+            <button type="button" className="font-semibold underline" onClick={() => { form.setValue("email", "demo"); form.setValue("password", DEMO_PASSWORD); }}>Completar</button>
             <br />Otras cuentas (datos simulados), misma contraseña:
             <ul className="mt-2 space-y-1">
               {DEMO.map(([r, em]) => (
-                <li key={em}><button type="button" className="text-left underline" onClick={() => { form.setValue("email", em); form.setValue("password", "Demo2026!"); }}>{r}: {em}</button></li>
+                <li key={em}><button type="button" className="text-left underline" onClick={() => { form.setValue("email", em); form.setValue("password", DEMO_PASSWORD); }}>{r}: {em}</button></li>
               ))}
             </ul>
           </Notice>

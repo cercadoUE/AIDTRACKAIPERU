@@ -1,9 +1,10 @@
 /**
  * Prueba de humo HTTP del flujo principal contra un servidor en ejecución.
  * Uso: BASE=http://localhost:3100 node scripts/smoke-http.mjs
- * Requiere los datos de demostración (usuarios *.demo, contraseña Demo2026!).
+ * Requiere los datos de demostración (usuarios *.demo). Contraseña: DEMO_PASSWORD (por defecto la de desarrollo local).
  */
 const BASE = process.env.BASE ?? "http://localhost:3100";
+const PASSWORD = process.env.DEMO_PASSWORD ?? "demo-local-2026";
 const jars = {};
 let failures = 0;
 
@@ -23,7 +24,7 @@ function check(name, ok, extra = "") {
   console.log(`${ok ? "PASS" : "FAIL"}  ${name}${extra ? "  " + extra : ""}`);
   if (!ok) failures++;
 }
-const login = (who, email) => call(who, "POST", "/api/auth/login", { email, password: "Demo2026!" });
+const login = (who, email) => call(who, "POST", "/api/auth/login", { email, password: PASSWORD });
 
 await login("donor", "donante@aidtrack.demo");
 await login("logi", "logistica@aidtrack.demo");

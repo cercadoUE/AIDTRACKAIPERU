@@ -3,7 +3,7 @@
 Plataforma nacional de donaciones y ayuda humanitaria. Conecta lo que las personas donan con las necesidades de los albergues mediante IA generativa (Amazon Bedrock) y optimización matemática (MILP con HiGHS).
 
 **Demo pública:** https://aawdafd2pq5xfnkasu5qxjndbe0jinoi.lambda-url.us-east-1.on.aws
-Usuario `demo`, contraseña `Demo2026!` (cuenta de demostración, datos simulados).
+Las credenciales de la cuenta de demostración se entregan por el portal de la Kiro IAthon, no en este repositorio. En local, `npm run seed` crea cuentas demo con la contraseña definida en `DEMO_PASSWORD`.
 
 > Los albergues, inventarios y donaciones de la demo son **simulados** y se muestran con la etiqueta SIMULADO. El catálogo territorial (INEI) y las estadísticas históricas de emergencias (INDECI/SINPAD) provienen de archivos oficiales. El índice de necesidad es experimental y no es un criterio oficial.
 

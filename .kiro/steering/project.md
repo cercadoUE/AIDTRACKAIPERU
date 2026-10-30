@@ -1,5 +1,8 @@
 # AIDTRACK AI PERÚ: convenciones del proyecto
 
+## Equipo y contexto
+Equipo T062 de la Kiro IAthon (`TEAM_ID=T062`, devuelto por `GET /health`). Proyecto construido con Spec-Driven Development de Kiro: la spec vive en `.kiro/specs/aidtrack/` y `tasks.md` se actualiza solo con evidencia (prueba o código). Región AWS: us-east-1.
+
 ## Producto
 Plataforma de donaciones humanitarias para Perú. Flujo central: el donante describe su donación (texto, voz o formulario) → Amazon Bedrock la interpreta → el usuario confirma → MILP (HiGHS) recomienda albergues → coordinación logística aprueba → envío → el albergue confirma la recepción con código de 6 dígitos.
 
@@ -26,4 +29,5 @@ Plataforma de donaciones humanitarias para Perú. Flujo central: el donante desc
 - No usar los damnificados históricos de SINPAD como ocupación actual de un albergue.
 - No registrar cantidades ambiguas sin confirmación del usuario ni asignar medicamentos automáticamente.
 - No confiar en controles del frontend: toda autorización va en el servidor (`requireRole`, `assertShelterAccess`).
+- No escribir credenciales, ni siquiera de demostración, en README, specs ni documentación.
 - No usar datos personales reales (nombres, correos, teléfonos) en semillas, pruebas ni ejemplos.
