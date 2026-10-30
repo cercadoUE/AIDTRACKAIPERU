@@ -41,7 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 # AIDTRACK
-data/raw/
+# data/raw contiene datos oficiales públicos (INEI, INDECI) y se versiona
 data/local/
 .env
 .env.*
