@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "name": "Ejecutar pruebas al guardar código",
+  "description": "Cuando se guarda un archivo TypeScript del servidor o de las rutas, ejecuta la suite de Vitest para detectar regresiones del flujo de donaciones, la optimización y los contratos públicos.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["src/server/**/*.ts", "src/app/**/route.ts", "src/app/**/*.tsx"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Se guardó un archivo de AIDTRACK. Ejecuta `npm test` y `npm run typecheck`. Si algo falla, explica la causa con el archivo y la línea, y propone la corrección mínima sin cambiar el comportamiento esperado por las pruebas."
+  }
+}

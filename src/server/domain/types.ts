@@ -250,7 +250,22 @@ export interface SettingsRecord extends Base {
   targetDays: number;
 }
 
+/** Ítem genérico del contrato público /items (insignia "Persistencia"). */
+export interface ItemRecord extends Base {
+  value: string;
+}
+
+/** Trabajo asíncrono del contrato público /jobs (insignia "Asíncrono o agente"). */
+export interface JobRecord extends Base {
+  input: string;
+  status: "queued" | "done";
+  output: string | null;
+  readyAt: string;
+}
+
 export interface Tables {
+  items: ItemRecord;
+  jobs: JobRecord;
   users: User;
   shelters: Shelter;
   inventory: InventoryItem;

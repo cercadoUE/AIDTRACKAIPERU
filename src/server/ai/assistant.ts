@@ -4,7 +4,7 @@ import type { Actor } from "../lib/auth";
 import { CATEGORIES, DEPARTMENTS, PRODUCTS, PRODUCT_BY_KEY, findDepartment, productLabel, stripAccents } from "../domain/catalog";
 import { dashboard, ranking, shelterViews } from "../services/queries";
 import { isOpenNeed, pendingQuantity, LEVEL_LABEL } from "../services/priority";
-import { aiMode, DEFAULT_MODEL } from "./provider";
+import { aiMode, DEFAULT_MODEL, sendWithRetry } from "./provider";
 
 export interface AssistantAnswer {
   answer: string;
@@ -122,7 +122,7 @@ async function askBedrock(repo: Repository, actor: Actor | null, q: string): Pro
   const messages: Message[] = [{ role: "user", content: [{ text: q }] }];
   const sources: AssistantAnswer["sources"] = [];
   for (let turn = 0; turn < 4; turn++) {
-    const out = await client.send(new ConverseCommand({ modelId: process.env.BEDROCK_MODEL_ID ?? DEFAULT_MODEL, system: [{ text: system }], messages, toolConfig: TOOLS, inferenceConfig: { maxTokens: 700, temperature: 0 } }));
+    const out = await sendWithRetry(() => client.send(new ConverseCommand({ modelId: process.env.BEDROCK_MODEL_ID ?? DEFAULT_MODEL, system: [{ text: system }], messages, toolConfig: TOOLS, inferenceConfig: { maxTokens: 700, temperature: 0 } })));
     const msg = out.output?.message;
     if (!msg) break;
     messages.push(msg);

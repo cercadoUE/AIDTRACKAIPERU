@@ -19,15 +19,36 @@ export function aiMode(): "bedrock" | "rules" {
 
 const CATALOG_TEXT = PRODUCTS.map((p) => `- ${p.key} (categoría ${p.category}, unidad ${p.unit})`).join("\n");
 
+const RETRYABLE = new Set(["ThrottlingException", "ServiceUnavailableException", "ModelNotReadyException", "TooManyRequestsException"]);
+export const RETRY_DELAYS_MS = [400, 1200];
+
+/**
+ * Envía una solicitud a Bedrock reintentando con espera creciente ante saturación (throttling).
+ * Los demás errores se propagan de inmediato para que el llamador use el respaldo.
+ */
+export async function sendWithRetry<T>(send: () => Promise<T>, delays: number[] = RETRY_DELAYS_MS): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await send();
+    } catch (e) {
+      const name = (e as { name?: string }).name ?? "";
+      if (!RETRYABLE.has(name) || attempt >= delays.length) throw e;
+      await new Promise((r) => setTimeout(r, delays[attempt]));
+    }
+  }
+}
+
 /** Llama a Bedrock y devuelve texto. El texto del usuario va como DATOS, nunca como instrucciones. */
 export async function converseText(system: string, user: string, maxTokens = 900): Promise<string> {
-  const out = await bedrock().send(
-    new ConverseCommand({
-      modelId: process.env.BEDROCK_MODEL_ID ?? DEFAULT_MODEL,
-      system: [{ text: system }],
-      messages: [{ role: "user", content: [{ text: user }] }],
-      inferenceConfig: { maxTokens, temperature: 0 },
-    }),
+  const out = await sendWithRetry(() =>
+    bedrock().send(
+      new ConverseCommand({
+        modelId: process.env.BEDROCK_MODEL_ID ?? DEFAULT_MODEL,
+        system: [{ text: system }],
+        messages: [{ role: "user", content: [{ text: user }] }],
+        inferenceConfig: { maxTokens, temperature: 0 },
+      }),
+    ),
   );
   return out.output?.message?.content?.map((c) => ("text" in c ? c.text : "")).join("") ?? "";
 }

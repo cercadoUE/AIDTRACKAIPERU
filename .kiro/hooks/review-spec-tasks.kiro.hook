@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "name": "Revisar tasks.md al cambiar la spec",
+  "description": "Cuando cambian requirements.md o design.md de la spec, verifica que tasks.md siga cubriendo cada requisito y que el estado de las tareas refleje lo implementado.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [".kiro/specs/**/requirements.md", ".kiro/specs/**/design.md"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "La spec de AIDTRACK cambió. Compara requirements.md y design.md con tasks.md de la misma carpeta: lista los requisitos sin tarea asociada y las tareas marcadas como hechas que no tengan código o prueba que lo respalde. Propón los cambios a tasks.md; no marques nada como hecho sin evidencia."
+  }
+}
